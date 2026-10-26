@@ -8,7 +8,7 @@ A safe public base for a real operating idea: route tasks by capability, preserv
 
 When machines have different capabilities, the operator needs to know where a job went, whether it finished, what changed, and how to recover it. A result without a reliable handoff is hard to trust. The coordinator is a movable control role, not a fixed physical machine. This demonstration turns the control pattern into a small, inspectable workflow.
 
-The project owner designed and operates the private workflow and defined this public demonstration's privacy boundary, acceptance checks, and case-study direction. Coding agents helped implement the synthetic demonstration and tests. The private configuration, documents, and operational records are not part of this repository.
+Leonel designs and operates adaptable AI workflows across machines. In his owner-reported private practice, he decides where coordination sits, routes work by capability, and preserves handoffs and recovery. He defined this public demonstration's scope, privacy boundary, and acceptance checks; coding agents helped implement the one-computer synthetic proof and tests. The private configuration, documents, and operational records are not part of this repository.
 
 ## Evidence map
 
