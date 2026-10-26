@@ -1,31 +1,199 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Synthetic single-computer Local AI Workcell status demonstration"><title>Local AI Workcell — synthetic run</title>
-<style>
-:root{--ink:#14231e;--muted:#52645c;--paper:#f4f4ed;--card:#fff;--line:#cbd4ca;--green:#185c47;--lime:#d6eeaa;--amber:#7a500b;--violet:#493c72}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit}a:focus-visible,summary:focus-visible{outline:3px solid #ad641d;outline-offset:4px}
-.shell{max-width:1200px;margin:auto;padding:0 32px}.mast{background:#14231e;color:#f7faef;padding:22px 0}.mast .shell{display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-size:18px;font-weight:750;letter-spacing:-.02em}.brand span{color:#bde196}.mast small{color:#b4c9bc}nav a{font-size:13px;font-weight:700;text-decoration:none;border:1px solid #809488;padding:9px 14px;border-radius:6px}
-.hero{padding:68px 0 44px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.17em;font-weight:800;color:var(--green)}.hero h1{font-size:clamp(40px,6vw,72px);letter-spacing:-.065em;line-height:1.02;max-width:800px;margin:18px 0}.hero p{font-size:18px;max-width:750px;color:#3d5147;margin:0}.notice{display:inline-block;background:#e6edd9;border:1px solid #c8d7ad;padding:9px 13px;border-radius:6px;margin-top:25px;font-size:13px;font-weight:700}.hero .role-credit{max-width:850px;margin-top:24px;padding-left:15px;border-left:3px solid var(--green);font-size:15px;line-height:1.55}
-.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:var(--card);margin:0 0 60px}.metric{padding:25px 27px;border-right:1px solid var(--line)}.metric:last-child{border:0}.metric strong{display:block;font-size:34px;letter-spacing:-.06em}.metric span{font-size:12px;color:var(--muted);font-weight:750;text-transform:uppercase;letter-spacing:.07em}
-.section-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:18px}h2{font-size:29px;letter-spacing:-.04em;margin:0}.section-head p{color:var(--muted);margin:0;max-width:470px;font-size:14px}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:58px}.job-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:25px}.job-top{display:flex;align-items:start;justify-content:space-between;gap:18px}.job-top h3{font-size:23px;letter-spacing:-.04em;margin:4px 0 22px}.state{border-radius:4px;background:var(--lime);color:var(--green);font-size:11px;font-weight:800;letter-spacing:.07em;padding:7px 9px;white-space:nowrap}.state[data-state="WAITING_WORKER"],.state[data-state="RETRY_PENDING"]{background:#fff0ce;color:var(--amber)}.state[data-state="FAILED"]{background:#ffe2d9;color:#902f22}.job-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-bottom:22px}.job-facts span{display:block;color:var(--muted);font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.05em}.job-facts strong,.job-facts code{display:block;margin-top:5px;font-size:14px;overflow-wrap:anywhere}.recovery{margin:0 0 17px;padding:8px 10px;background:#fff3da;border-left:3px solid #b97c22;color:#62430e;font-size:12px;font-weight:700}details{border-top:1px solid var(--line);padding-top:13px}summary{cursor:pointer;font-size:13px;font-weight:800;color:var(--green)}.timeline{list-style:none;padding:0;margin:16px 0 0}.timeline li{display:flex;gap:15px;border-top:1px solid #e7ebe4;padding:10px 0;font-size:13px;font-weight:700}.timeline b{font-size:11px;color:var(--green);font-variant-numeric:tabular-nums}.timeline small{display:block;color:var(--muted);font-size:11px;font-weight:500}
-.architecture{background:#e5ebdd;padding:47px 0 55px}.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:22px}.flow div{background:var(--card);border:1px solid var(--line);padding:18px;border-radius:6px}.flow b{display:block;color:var(--green);font-size:12px;margin-bottom:8px}.flow span{font-size:14px;font-weight:700}.method{padding:45px 0 65px}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:22px}.method-grid p{font-size:14px;color:var(--muted);margin:7px 0}.method-grid h3{font-size:17px;margin:0}footer{background:#14231e;color:#b8cbbb;padding:25px 0;font-size:12px}
-@media(max-width:800px){.metric-grid{grid-template-columns:repeat(2,1fr)}.metric:nth-child(2){border-right:0}.metric:nth-child(-n+2){border-bottom:1px solid var(--line)}.cards{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.shell{padding:0 18px}.mast small{display:none}.hero{padding:45px 0 36px}.hero h1{font-size:46px}.hero p{font-size:16px}.metric{padding:17px}.metric strong{font-size:28px}.job-card{padding:18px}.job-top{display:block}.job-top h3{margin-bottom:8px}.state{display:inline-block;margin-bottom:20px}.job-facts{grid-template-columns:1fr 1fr}.job-facts div:last-child{grid-column:1/-1}.flow{grid-template-columns:1fr}.method-grid{grid-template-columns:1fr}.section-head{display:block}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-</style></head><body><header class="mast"><div class="shell"><div class="brand">LOCAL AI <span>WORKCELL</span></div><small>ONE-COMPUTER / SYNTHETIC SIMULATION</small><nav><a href="#jobs">Job trail</a></nav></div></header>
-<main><section class="hero shell"><span class="eyebrow">Capability-routed operations · local proof</span><h1>Work moves with proof.</h1><p>A synthetic document passes through a mock OCR worker, a validation worker, and a results node. Every handoff has a state and checksum; retries and unavailable workers stay visible.</p><span class="notice">A one-computer model of owner-reported multi-machine practice. Mock OCR reads SVG text nodes; no real worker was used.</span><p class="role-credit"><strong>Operating design: Leonel.</strong> He reports designing and operating adaptable AI workflows across machines, deciding where coordination sits, routing by capability, and preserving handoffs and recovery. Leonel defined this demo's scope and acceptance checks; coding agents helped implement the synthetic proof.</p></section>
-<section class="shell" aria-label="Run totals"><div class="metric-grid"><div class="metric"><strong>02</strong><span>Jobs submitted</span></div><div class="metric"><strong>02</strong><span>Delivered</span></div><div class="metric"><strong>01</strong><span>Retried</span></div><div class="metric"><strong>03</strong><span>Worker capabilities</span></div></div></section>
-<section class="shell" id="jobs"><div class="section-head"><h2>Each job has a trail</h2><p>State changes show the route and recovery. Manifests carry job IDs; redacted logs carry generic worker labels and reason codes only.</p></div><div class="cards"><article class="job-card" aria-labelledby="job-480a7caaea1ae818">
-          <div class="job-top"><div><span class="eyebrow">JOB / 480a7caaea1ae818</span><h3 id="job-480a7caaea1ae818">Synthetic document</h3></div><span class="state" data-state="DELIVERED">DELIVERED</span></div>
-          <div class="job-facts"><div><span>OCR attempts</span><strong>2 / 2</strong></div><div><span>Input checksum</span><code>1c4ef75c0eac…</code></div><div><span>Delivery checksum</span><code>fd5b6ba8ec97…</code></div></div>
-<p class="recovery">Worker unavailable → recovered after a bounded retry</p>
-          <details><summary>View state trail</summary><ol class="timeline"><li><b>01</b><span>NEW<small>coordinator-node · SUBMITTED</small></span></li><li><b>02</b><span>WAITING_WORKER<small>coordinator-node · CAPABILITY_UNAVAILABLE</small></span></li><li><b>03</b><span>ROUTED<small>ocr-node</small></span></li><li><b>04</b><span>RETRY_PENDING<small>ocr-node · SIMULATED_TRANSIENT_FAILURE</small></span></li><li><b>05</b><span>ROUTED<small>ocr-node</small></span></li><li><b>06</b><span>OCR_DONE<small>ocr-node</small></span></li><li><b>07</b><span>VALIDATED<small>validation-node</small></span></li><li><b>08</b><span>DELIVERED<small>results-node</small></span></li></ol></details>
-        </article><article class="job-card" aria-labelledby="job-52aa6217c71eaf48">
-          <div class="job-top"><div><span class="eyebrow">JOB / 52aa6217c71eaf48</span><h3 id="job-52aa6217c71eaf48">Synthetic document</h3></div><span class="state" data-state="DELIVERED">DELIVERED</span></div>
-          <div class="job-facts"><div><span>OCR attempts</span><strong>1 / 2</strong></div><div><span>Input checksum</span><code>f2b02532836c…</code></div><div><span>Delivery checksum</span><code>a2093db8c5eb…</code></div></div>
-
-          <details><summary>View state trail</summary><ol class="timeline"><li><b>01</b><span>NEW<small>coordinator-node · SUBMITTED</small></span></li><li><b>02</b><span>ROUTED<small>ocr-node</small></span></li><li><b>03</b><span>OCR_DONE<small>ocr-node</small></span></li><li><b>04</b><span>VALIDATED<small>validation-node</small></span></li><li><b>05</b><span>DELIVERED<small>results-node</small></span></li></ol></details>
-        </article></div></section>
-<section class="architecture"><div class="shell"><span class="eyebrow">The route</span><h2>Capability first, then evidence.</h2><div class="flow"><div><b>01 / COORDINATE</b><span>Deterministic ID and input checksum</span></div><div><b>02 / OCR</b><span>Deterministic SVG text-node mock</span></div><div><b>03 / VALIDATE</b><span>Source, derived and manual review separated</span></div><div><b>04 / RESULTS</b><span>Idempotent delivery with checksum</span></div></div></div></section>
-<section class="method shell"><span class="eyebrow">Operating boundary</span><h2>What this run proves</h2><div class="method-grid"><div><h3>Duplicate protection</h3><p>Submitting identical bytes returns the existing job. A delivered result is never processed twice.</p></div><div><h3>Bounded recovery</h3><p>An unavailable OCR worker waits without consuming an attempt. A simulated failure uses one of two allowed attempts.</p></div><div><h3>Honest evidence</h3><p>The demo proves orchestration mechanics only. It does not measure OCR accuracy or represent a production deployment.</p></div></div></section></main>
-<footer><div class="shell">Local AI Workcell · public synthetic proof · private operating practice is owner-reported, not reproduced here</div></footer></body></html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A synthetic local AI workflow with capability routing, evidence handoffs, and bounded recovery.">
+<title>Local AI Workcell | Synthetic workflow proof</title>
+<style>:root {
+  color-scheme: light;
+  --bg: #f4f6f3;
+  --surface: #ffffff;
+  --ink: #15241e;
+  --muted: #43574b;
+  --line: #b9c8bf;
+  --accent: #176047;
+  --accent-soft: #e2f1e9;
+  --on-accent: #ffffff;
+  --wait: #76500a;
+  --wait-soft: #fff2d5;
+  --error: #8a3029;
+  --error-soft: #fbe8e3;
+  --focus: #b46a16;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #101c18;
+    --surface: #192b23;
+    --ink: #eef6ef;
+    --muted: #bed0c2;
+    --line: #547363;
+    --accent: #9ae0b7;
+    --accent-soft: #234736;
+    --on-accent: #10241a;
+    --wait: #f5d28b;
+    --wait-soft: #493813;
+    --error: #ffc5b8;
+    --error-soft: #4c2726;
+    --focus: #ffd184;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: inherit; }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.skip { position: absolute; left: -100vw; top: 8px; background: var(--surface); padding: 10px; z-index: 10; }
+.skip:focus { left: 8px; }
+.shell { width: min(1200px, calc(100% - 48px)); margin-inline: auto; }
+.mast { background: #10251b; color: #f2f8f1; }
+.mast .shell { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; }
+.brand { font-size: 17px; font-weight: 750; letter-spacing: -.02em; text-decoration: none; }
+.brand span { color: #a8e8bc; }
+.mast nav { display: flex; gap: 16px; }
+.mast nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 700; text-decoration: none; }
+.mast nav a:hover { text-decoration: underline; }
+.hero { padding: 35px 0 35px; }
+.hero-top { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr); gap: 48px; align-items: end; }
+.scope-label { margin: 0 0 8px; color: var(--accent); font-size: 14px; font-weight: 750; }
+h1 { max-width: 760px; margin: 0 0 14px; font-size: clamp(32px, 3.4vw, 48px); line-height: 1.1; letter-spacing: -.035em; text-wrap: balance; }
+.lede { max-width: 73ch; margin: 0; color: var(--muted); font-size: 18px; }
+.run-result { border-top: 3px solid var(--accent); padding-top: 13px; }
+.proof-version { display: block; margin-bottom: 6px; color: var(--accent); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.run-result strong { display: block; font-size: 25px; line-height: 1.2; letter-spacing: -.025em; }
+.run-result p { margin: 7px 0 12px; color: var(--muted); font-size: 15px; }
+.action { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; background: var(--accent); color: var(--on-accent); border-radius: 7px; font-weight: 750; text-decoration: none; }
+.action:hover { text-decoration: underline; }
+.v2-teaser { display: flex; align-items: center; justify-content: space-between; gap: 30px; margin-top: 25px; padding: 14px 18px; border-left: 3px solid var(--accent); background: var(--accent-soft); }
+.v2-teaser strong { font-size: 15px; }
+.v2-teaser p { max-width: 80ch; margin: 3px 0 0; color: var(--muted); font-size: 14px; }
+.v2-teaser a { flex: 0 0 auto; min-height: 44px; display: inline-flex; align-items: center; gap: 7px; color: var(--accent); font-size: 14px; font-weight: 800; text-underline-offset: 4px; }
+.hero-micro-route { display: none; }
+.route { margin: 27px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px 16px; }
+.route figcaption { font-size: 16px; font-weight: 750; margin-bottom: 13px; }
+.route-steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; list-style: none; margin: 0; padding: 0; }
+.route-steps li { position: relative; min-height: 100px; padding: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+.route-steps li:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 32px; z-index: 1; color: var(--accent); font-size: 20px; font-weight: 800; }
+.route-steps b { display: block; font-size: 15px; line-height: 1.25; }
+.route-steps span { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; line-height: 1.32; }
+.route-steps .result-node { background: var(--accent-soft); border-color: var(--accent); }
+.route-branches { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.route-branches p { flex: 1 1 310px; margin: 0; padding: 9px 12px; border: 1px dashed var(--wait); border-radius: 6px; background: var(--wait-soft); color: var(--ink); font-size: 14px; }
+.route-branches strong { color: var(--wait); }
+.route-evidence { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.boundary { max-width: 90ch; margin: 15px 0 0; color: var(--muted); font-size: 14px; }
+.v2-section { padding-block: 44px 50px; background: var(--surface); border-block: 1px solid var(--line); }
+.v2-heading { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 23px; }
+.v2-heading h2 { margin-bottom: 8px; }
+.v2-heading p:last-child { max-width: 76ch; margin: 0; color: var(--muted); }
+.v2-observation { min-width: 250px; max-width: 290px; border-left: 3px solid var(--accent); padding-left: 16px; }
+.v2-observation strong, .v2-observation span { display: block; }
+.v2-observation strong { font-size: 23px; line-height: 1.2; }
+.v2-observation span { margin-top: 6px; color: var(--muted); font-size: 14px; }
+.v2-flow { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; }
+.v2-flow > div { position: relative; min-height: 115px; padding: 13px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); }
+.v2-flow > div:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 43px; z-index: 1; color: var(--accent); font-size: 18px; font-weight: 800; }
+.v2-flow b { display: block; margin-bottom: 5px; color: var(--accent); font: 700 12px/1.2 ui-monospace, Consolas, monospace; }
+.v2-flow strong, .v2-flow span { display: block; }
+.v2-flow strong { font-size: 15px; }
+.v2-flow span { margin-top: 5px; color: var(--muted); font-size: 13px; }
+.v2-flow .v2-worker { border-color: var(--accent); }
+.v2-flow .v2-result { background: var(--accent-soft); border-color: var(--accent); }
+.v2-return { margin: 12px 0 0; padding: 10px 13px; border: 1px dashed var(--wait); border-radius: 6px; background: var(--wait-soft); font-size: 14px; }
+.v2-return strong { color: var(--wait); }
+.v2-links { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 14px; }
+.v2-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); font-weight: 750; text-underline-offset: 4px; }
+.section { padding: 39px 0; }
+h2 { margin: 0 0 10px; font-size: 29px; line-height: 1.16; letter-spacing: -.025em; }
+.section-intro { max-width: 72ch; margin: 0 0 22px; color: var(--muted); }
+.jobs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.job { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 21px; }
+.job-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+.job h3 { margin: 0 0 7px; font-size: 20px; }
+.job-id { color: var(--muted); font: 13px/1.3 ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+.state { padding: 5px 8px; border-radius: 5px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 800; white-space: nowrap; }
+.state[data-state="FAILED"] { background: var(--error-soft); color: var(--error); }
+.state[data-state="WAITING_WORKER"], .state[data-state="RETRY_PENDING"] { background: var(--wait-soft); color: var(--wait); }
+.job-facts { display: flex; flex-wrap: wrap; gap: 9px 24px; margin: 17px 0; color: var(--muted); font-size: 14px; }
+.job-facts strong { color: var(--ink); }
+.recovery { margin: 0 0 16px; color: var(--wait); font-size: 15px; font-weight: 700; }
+details { border-top: 1px solid var(--line); }
+summary { display: flex; align-items: center; min-height: 44px; color: var(--accent); font-weight: 750; cursor: pointer; }
+.timeline { margin: 8px 0 0; padding-left: 21px; }
+.timeline li { padding: 6px 0; }
+.timeline small { display: block; color: var(--muted); }
+.ownership { background: var(--surface); border-block: 1px solid var(--line); }
+.ownership-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.ownership h3 { margin: 0 0 6px; font-size: 18px; }
+.ownership p { max-width: 65ch; margin: 0; color: var(--muted); }
+.proof-list { margin: 10px 0 0; padding-left: 21px; }
+.proof-list li { margin: 8px 0; }
+footer { padding: 20px 0 30px; color: var(--muted); font-size: 14px; }
+@media (max-width: 1050px) { .route-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } .route-steps li:nth-child(3)::after { display: none; } .v2-flow { grid-template-columns: repeat(3,minmax(0,1fr)); } .v2-flow > div:nth-child(3)::after { display: none; } }
+@media (max-width: 760px) { .hero-top, .jobs, .ownership-grid { grid-template-columns: 1fr; } .hero-top { gap: 20px; } .run-result { max-width: 600px; } .hero-micro-route { display: block; margin-top: 19px; padding: 9px 11px; border: 1px solid var(--line); background: var(--surface); } .hero-micro-route > div { display: flex; align-items: center; justify-content: space-between; gap: 3px; } .hero-micro-route span { font-size: 13px; font-weight: 750; } .hero-micro-route b { color: var(--accent); font-size: 14px; } .hero-micro-route p { margin: 5px 0 0; color: var(--wait); font-size: 13px; font-weight: 700; } .v2-teaser, .v2-heading { align-items: start; flex-direction: column; gap: 9px; } .v2-observation { max-width: none; } .v2-flow { grid-template-columns: repeat(2,minmax(0,1fr)); } .v2-flow > div:nth-child(2)::after, .v2-flow > div:nth-child(4)::after { display: none; } .v2-flow > div:nth-child(3)::after { display: block; } .route-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .route-steps li:nth-child(2)::after, .route-steps li:nth-child(4)::after { display: none; } .route-steps li:nth-child(3)::after { display: block; } }
+@media (max-width: 520px) { .shell { width: min(100% - 32px, 1200px); } .mast nav a:last-child { display: none; } .hero { padding-top: 24px; } h1 { font-size: 32px; } .lede { font-size: 16px; } .route { padding: 14px; } .route-steps, .v2-flow { grid-template-columns: 1fr; gap: 9px; } .route-steps li, .v2-flow > div { min-height: 0; } .route-steps li::after, .v2-flow > div::after { display: none !important; } .route-steps span, .v2-flow span { font-size: 14px; } .section { padding: 31px 0; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style></head><body>
+<a class="skip" href="#main">Skip to workflow</a>
+<header class="mast"><div class="shell"><a class="brand" href="#main">LOCAL AI <span>WORKCELL</span></a>
+<nav aria-label="Page"><a href="#v2-proof">v0.2 process proof</a><a href="#jobs">Inspect job trail</a><a href="#ownership">Design and evidence</a></nav></div></header>
+<main id="main"><section class="hero shell" aria-labelledby="page-title">
+<div class="hero-top"><div><p class="scope-label">Local orchestration / public synthetic proof</p>
+<h1 id="page-title">Route local AI jobs by capability and verify every handoff.</h1>
+<p class="lede">Leonel designs and operates adaptable AI workflows where coordinator control can move between machines. This public walkthrough assigns fictional documents to mock OCR, validation, and results roles, with recorded waits and bounded retries.</p></div>
+<aside class="run-result" aria-label="Verified v0.1 synthetic result"><small class="proof-version">Live walkthrough · v0.1</small><strong>2 of 2 synthetic jobs delivered</strong>
+<p>1 waited for a worker; 1 used a bounded retry; 0 remain unresolved.</p><a class="action" href="#jobs">Inspect recovery trail</a></aside></div>
+<div class="hero-micro-route" role="img" aria-label="Synthetic request routes through coordinator and mock OCR to validation and delivery; 1 job waited for worker availability and 1 retried before delivery."><div><span>Request</span><b>→</b><span>Route</span><b>→</b><span>Validate</span><b>→</b><span>Deliver</span></div><p>Unavailable (1) or retry (1) returns to routing ↺</p></div>
+<div class="v2-teaser"><div><strong>Separate v0.2 process proof</strong><p>3 of 3 fictional PNGs delivered through two OCR processes, one validation process, and a durable queue. One deliberate loopback interruption recovered.</p></div><a href="#v2-proof">See the process and evidence <span aria-hidden="true">↘</span></a></div>
+<figure class="route" aria-labelledby="route-title" aria-describedby="route-description">
+<figcaption id="route-title">How one synthetic job reaches a validated result</figcaption>
+<ol class="route-steps">
+<li><b>Request</b><span>Fictional SVG input</span></li>
+<li><b>Coordinator</b><span>Job ID and input hash</span></li>
+<li><b>Capability route</b><span>Select available role</span></li>
+<li><b>Mock OCR</b><span>SVG text nodes only</span></li>
+<li><b>Validate</b><span>Separate facts and review</span></li>
+<li class="result-node"><b>Deliver</b><span>Output checksum, once</span></li>
+</ol>
+<div class="route-branches"><p><strong>Unavailable:</strong> WAITING_WORKER keeps the job; it resumes when the OCR capability returns.</p>
+<p><strong>Transient failure:</strong> RETRY_PENDING returns to routing and consumes one of two allowed OCR attempts.</p></div>
+<p class="route-evidence" id="route-description">Evidence handoff: input hash → manifest and redacted state events → result hash → delivery hash. This run used 1 wait and 1 retry event; all totals come from the generated manifests.</p>
+</figure>
+<p class="boundary">One computer and one Python process simulate the roles shown above. Mock OCR reads SVG text nodes; this view does not establish real OCR accuracy or multi-computer reliability.</p>
+</section>
+<section class="v2-section" id="v2-proof" aria-labelledby="v2-title"><div class="shell">
+<div class="v2-heading"><div><p class="scope-label">v0.2 / local process experiment</p><h2 id="v2-title">The queue survives the interruption.</h2><p>The coordinator accepts only committed fictional PNGs. Two OCR worker processes call Tesseract; a separate validation worker checks the known synthetic labels. All workers register over authenticated loopback connections on one computer.</p></div><div class="v2-observation"><strong>3/3 delivered</strong><span>1 interrupted connection · 1 recovered job · 2 concurrent OCR leases</span></div></div>
+<div class="v2-flow" role="img" aria-label="Synthetic PNG enters a durable SQLite queue, two OCR processes compete for work, a validation process checks the result, and one delivery is recorded. A dropped worker connection returns the job to the queue.">
+<div><b>01</b><strong>Submit</strong><span>Fixed synthetic PNG</span></div><div><b>02</b><strong>Durable queue</strong><span>SQLite claim + restart recovery</span></div><div class="v2-worker"><b>03</b><strong>OCR workers ×2</strong><span>Separate processes · Tesseract</span></div><div><b>04</b><strong>Validate</strong><span>Separate worker process</span></div><div class="v2-result"><b>05</b><strong>Deliver once</strong><span>Result hash + terminal state</span></div></div>
+<p class="v2-return"><strong>Recovery loop:</strong> a deliberate connection drop returns one claimed job to the queue; another worker finishes it within the two-attempt limit. A coordinator restart also requeues in-flight work.</p>
+<div class="v2-links"><a href="docs/V2_PROOF.md">Method and limits</a><a href="docs/v2-sample-report.json">Inspect the synthetic report</a></div>
+<p class="boundary">This observed run used Python 3.14 and tesseract v5.5.0.20241111. Its 1030 ms elapsed time is one local observation, not a benchmark. No remote machine or private input was used.</p>
+</div></section>
+<section class="section shell" id="jobs" aria-labelledby="jobs-title"><h2 id="jobs-title">Inspect the state trail</h2>
+<p class="section-intro">Each card shows the terminal state, attempts, and checksum excerpts. Open a trail to see exactly where the synthetic job waited, retried, and delivered.</p>
+<div class="jobs"><article class="job" aria-labelledby="job-480a7caaea1ae818">
+          <div class="job-head"><div><h3 id="job-480a7caaea1ae818">Synthetic document</h3>
+          <span class="job-id">Job 480a7caaea1ae818</span></div>
+          <span class="state" data-state="DELIVERED">DELIVERED</span></div>
+          <div class="job-facts"><span>OCR attempts: <strong>2 of 2</strong></span>
+          <span>Input hash: <strong>1c4ef75c0eac…</strong></span>
+          <span>Delivery hash: <strong>fd5b6ba8ec97…</strong></span></div>
+          <p class="recovery">Worker unavailable, then recovered after one bounded retry.</p><details><summary>View state trail</summary>
+          <ol class="timeline"><li><strong>01 NEW</strong><small>coordinator-node · SUBMITTED</small></li><li><strong>02 WAITING_WORKER</strong><small>coordinator-node · CAPABILITY_UNAVAILABLE</small></li><li><strong>03 ROUTED</strong><small>ocr-node</small></li><li><strong>04 RETRY_PENDING</strong><small>ocr-node · SIMULATED_TRANSIENT_FAILURE</small></li><li><strong>05 ROUTED</strong><small>ocr-node</small></li><li><strong>06 OCR_DONE</strong><small>ocr-node</small></li><li><strong>07 VALIDATED</strong><small>validation-node</small></li><li><strong>08 DELIVERED</strong><small>results-node</small></li></ol></details></article><article class="job" aria-labelledby="job-52aa6217c71eaf48">
+          <div class="job-head"><div><h3 id="job-52aa6217c71eaf48">Synthetic document</h3>
+          <span class="job-id">Job 52aa6217c71eaf48</span></div>
+          <span class="state" data-state="DELIVERED">DELIVERED</span></div>
+          <div class="job-facts"><span>OCR attempts: <strong>1 of 2</strong></span>
+          <span>Input hash: <strong>f2b02532836c…</strong></span>
+          <span>Delivery hash: <strong>a2093db8c5eb…</strong></span></div>
+          <details><summary>View state trail</summary>
+          <ol class="timeline"><li><strong>01 NEW</strong><small>coordinator-node · SUBMITTED</small></li><li><strong>02 ROUTED</strong><small>ocr-node</small></li><li><strong>03 OCR_DONE</strong><small>ocr-node</small></li><li><strong>04 VALIDATED</strong><small>validation-node</small></li><li><strong>05 DELIVERED</strong><small>results-node</small></li></ol></details></article></div></section>
+<section class="ownership" id="ownership"><div class="section shell"><h2>Design ownership and proof boundary</h2>
+<div class="ownership-grid"><div><h3>Leonel's operating design</h3><p>Leonel reports designing and operating adaptable AI workflows across machines. He decides where coordination sits, routes by capability, and preserves handoffs and recovery. He set this public demo's scope and acceptance checks; coding agents assisted with implementation.</p></div>
+<div><h3>What this repository verifies</h3><p>Its synthetic tests cover deterministic IDs, legal state changes, waiting, bounded retry, duplicate protection, checksums, and delivery. Reproduce the local run and inspect the source before treating any broader private practice as independently verified.</p></div></div></div></section>
+<section class="section shell" aria-labelledby="next-title"><h2 id="next-title">What to examine next</h2><ul class="proof-list">
+<li>Reproduce this one-process baseline with the commands in the repository README.</li>
+<li>Reproduce the separate v0.2 local process experiment for authenticated workers, durable queue recovery, and Tesseract OCR on public synthetic images. Its evidence remains separate from this baseline.</li>
+<li><a href="https://github.com/T-Crypt/berth">Berth</a> is a source-reviewed GPU contention research candidate, not installed or validated here. Any use requires a disposable controlled pilot.</li>
+</ul></section></main>
+<footer><div class="shell">Local AI Workcell · fictional inputs only · no private operating records</div></footer>
+</body></html>

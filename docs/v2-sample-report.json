@@ -1,0 +1,151 @@
+{
+  "schema": "workcell-v2-synthetic-v1",
+  "boundary": "Loopback-only multi-process experiment; public synthetic PNGs; no real node",
+  "ocr_engine": "tesseract v5.5.0.20241111",
+  "submitted": 3,
+  "delivered": 3,
+  "failed": 0,
+  "transport_interruptions": 1,
+  "recovered_jobs": 1,
+  "max_simultaneous_ocr_leases": 2,
+  "elapsed_ms": 1030,
+  "jobs": [
+    {
+      "id": "4713fcf947565053cff1",
+      "fixture": "synthetic-1.png",
+      "input_sha": "4713fcf947565053cff137d40bf15a02da2f5842987691865f7014b1aea578e5",
+      "state": "DELIVERED",
+      "attempts": 2,
+      "ocr_ms": 160,
+      "result_sha": "c90b5cf0260c8d768d30f5eda2e1cfb5149530f99b3b14d70aba7a016c4d31d1",
+      "recoveries": 1,
+      "error": null
+    },
+    {
+      "id": "81585ee791ff7bd6025e",
+      "fixture": "synthetic-2.png",
+      "input_sha": "81585ee791ff7bd6025e55de4f02795051c56af9ce534da6f3eea692a307dfa3",
+      "state": "DELIVERED",
+      "attempts": 1,
+      "ocr_ms": 151,
+      "result_sha": "eedbe8bce5e68f5c30d7b148c2bc784bcd420807568f65ae0b69b74fd1273fd8",
+      "recoveries": 0,
+      "error": null
+    },
+    {
+      "id": "2f3670701028b0828563",
+      "fixture": "synthetic-3.png",
+      "input_sha": "2f3670701028b08285630d893c2ab89ed44ecd9d0122fdbc0124f11c393334ec",
+      "state": "DELIVERED",
+      "attempts": 1,
+      "ocr_ms": 148,
+      "result_sha": "c706810ce83a7b0a55b89fafc1ca896239f10affb1f0d66d918288f6ae132956",
+      "recoveries": 0,
+      "error": null
+    }
+  ],
+  "events": [
+    {
+      "job_id": "4713fcf947565053cff1",
+      "state": "QUEUED_OCR",
+      "reason": "SUBMITTED",
+      "worker": "coordinator"
+    },
+    {
+      "job_id": "81585ee791ff7bd6025e",
+      "state": "QUEUED_OCR",
+      "reason": "SUBMITTED",
+      "worker": "coordinator"
+    },
+    {
+      "job_id": "2f3670701028b0828563",
+      "state": "QUEUED_OCR",
+      "reason": "SUBMITTED",
+      "worker": "coordinator"
+    },
+    {
+      "job_id": "4713fcf947565053cff1",
+      "state": "OCR_RUNNING",
+      "reason": "CLAIMED",
+      "worker": "ocr-1"
+    },
+    {
+      "job_id": "4713fcf947565053cff1",
+      "state": "QUEUED_OCR",
+      "reason": "TRANSPORT_DISCONNECT",
+      "worker": "ocr-1"
+    },
+    {
+      "job_id": "4713fcf947565053cff1",
+      "state": "OCR_RUNNING",
+      "reason": "CLAIMED",
+      "worker": "ocr-2"
+    },
+    {
+      "job_id": "81585ee791ff7bd6025e",
+      "state": "OCR_RUNNING",
+      "reason": "CLAIMED",
+      "worker": "ocr-1"
+    },
+    {
+      "job_id": "4713fcf947565053cff1",
+      "state": "QUEUED_VALIDATE",
+      "reason": "OCR_RESULT_HASHED",
+      "worker": "ocr-2"
+    },
+    {
+      "job_id": "2f3670701028b0828563",
+      "state": "OCR_RUNNING",
+      "reason": "CLAIMED",
+      "worker": "ocr-2"
+    },
+    {
+      "job_id": "4713fcf947565053cff1",
+      "state": "VALIDATING",
+      "reason": "CLAIMED",
+      "worker": "validate-1"
+    },
+    {
+      "job_id": "81585ee791ff7bd6025e",
+      "state": "QUEUED_VALIDATE",
+      "reason": "OCR_RESULT_HASHED",
+      "worker": "ocr-1"
+    },
+    {
+      "job_id": "4713fcf947565053cff1",
+      "state": "DELIVERED",
+      "reason": "VALIDATED_ONCE",
+      "worker": "validate-1"
+    },
+    {
+      "job_id": "81585ee791ff7bd6025e",
+      "state": "VALIDATING",
+      "reason": "CLAIMED",
+      "worker": "validate-1"
+    },
+    {
+      "job_id": "2f3670701028b0828563",
+      "state": "QUEUED_VALIDATE",
+      "reason": "OCR_RESULT_HASHED",
+      "worker": "ocr-2"
+    },
+    {
+      "job_id": "81585ee791ff7bd6025e",
+      "state": "DELIVERED",
+      "reason": "VALIDATED_ONCE",
+      "worker": "validate-1"
+    },
+    {
+      "job_id": "2f3670701028b0828563",
+      "state": "VALIDATING",
+      "reason": "CLAIMED",
+      "worker": "validate-1"
+    },
+    {
+      "job_id": "2f3670701028b0828563",
+      "state": "DELIVERED",
+      "reason": "VALIDATED_ONCE",
+      "worker": "validate-1"
+    }
+  ]
+}

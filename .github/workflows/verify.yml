@@ -1,0 +1,43 @@
+name: Verify synthetic Workcell
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install OCR engine for synthetic v0.2 fixture
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr
+      - name: Unit and integration tests
+        env:
+          WORKCELL_V2_INTEGRATION: '1'
+        run: python -m unittest discover -s tests -v
+      - name: Mutation and privacy checks
+        run: |
+          python tests/mutation_check.py
+          python scripts/privacy_scan.py
+      - name: Generated page and two demo versions
+        run: |
+          python scripts/refresh_demo.py
+          git diff --exit-code -- index.html
+          python -m workcell.cli demo --output "$RUNNER_TEMP/v1"
+          python -m workcell.cli verify --output "$RUNNER_TEMP/v1"
+          python -m workcell.v2 demo --output "$RUNNER_TEMP/v2"
+      - name: Deterministic package
+        run: |
+          python scripts/package.py --output "$RUNNER_TEMP/package-one"
+          python scripts/package.py --output "$RUNNER_TEMP/package-two"
+          cmp "$RUNNER_TEMP/package-one/local-ai-workcell-public.zip" "$RUNNER_TEMP/package-two/local-ai-workcell-public.zip"
+          cmp "$RUNNER_TEMP/package-one/CONTENT_INVENTORY.sha256" "$RUNNER_TEMP/package-two/CONTENT_INVENTORY.sha256"

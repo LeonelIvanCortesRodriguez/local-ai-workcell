@@ -1,48 +1,110 @@
-"""A static status view generated only from redacted job metadata."""
+"""Accessible static status view generated from synthetic job metadata."""
 
 from __future__ import annotations
 
+import json
 from html import escape
+from pathlib import Path
+
+CSS = (Path(__file__).with_name("status.css")).read_text(encoding="utf-8")
+V2_SAMPLE = json.loads(
+    (Path(__file__).resolve().parent.parent / "docs" / "v2-sample-report.json").read_text(encoding="utf-8")
+)
 
 
 def render_status(manifests: list[dict]) -> str:
-    cards = []
     delivered = sum(item["state"] == "DELIVERED" for item in manifests)
     retries = sum(item["attempts"] > 1 for item in manifests)
+    waiting = sum(
+        any(event.get("code") == "CAPABILITY_UNAVAILABLE" for event in item["events"])
+        for item in manifests
+    )
+    unresolved = len(manifests) - delivered
+    jobs = []
     for item in manifests:
         identifier = escape(item["job_id"])
         state = escape(item["state"])
-        phases = []
+        events = []
         for event in item["events"]:
             worker = escape(event.get("worker", "coordinator-node"))
             code = f" · {escape(event['code'])}" if event.get("code") else ""
-            phases.append(f"<li><b>{event['seq']:02}</b><span>{escape(event['state'])}<small>{worker}{code}</small></span></li>")
-        recovered = item["state"] == "DELIVERED" and any(event.get("code") == "CAPABILITY_UNAVAILABLE" for event in item["events"])
-        recovery_note = '<p class="recovery">Worker unavailable → recovered after a bounded retry</p>' if recovered and item["attempts"] > 1 else ''
-        cards.append(f'''<article class="job-card" aria-labelledby="job-{identifier}">
-          <div class="job-top"><div><span class="eyebrow">JOB / {identifier}</span><h3 id="job-{identifier}">Synthetic document</h3></div><span class="state" data-state="{state}">{state.replace('_', ' ')}</span></div>
-          <div class="job-facts"><div><span>OCR attempts</span><strong>{item['attempts']} / {item['max_attempts']}</strong></div><div><span>Input checksum</span><code>{escape(item['input_sha256'][:12])}…</code></div><div><span>Delivery checksum</span><code>{escape((item.get('delivery_sha256') or 'pending')[:12])}{'…' if item.get('delivery_sha256') else ''}</code></div></div>
-{recovery_note}
-          <details><summary>View state trail</summary><ol class="timeline">{''.join(phases)}</ol></details>
-        </article>''')
-    return f'''<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Synthetic single-computer Local AI Workcell status demonstration"><title>Local AI Workcell — synthetic run</title>
-<style>
-:root{{--ink:#14231e;--muted:#52645c;--paper:#f4f4ed;--card:#fff;--line:#cbd4ca;--green:#185c47;--lime:#d6eeaa;--amber:#7a500b;--violet:#493c72}}
-*{{box-sizing:border-box}}html{{scroll-behavior:smooth}}body{{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}}a{{color:inherit}}a:focus-visible,summary:focus-visible{{outline:3px solid #ad641d;outline-offset:4px}}
-.shell{{max-width:1200px;margin:auto;padding:0 32px}}.mast{{background:#14231e;color:#f7faef;padding:22px 0}}.mast .shell{{display:flex;align-items:center;justify-content:space-between;gap:20px}}.brand{{font-size:18px;font-weight:750;letter-spacing:-.02em}}.brand span{{color:#bde196}}.mast small{{color:#b4c9bc}}nav a{{font-size:13px;font-weight:700;text-decoration:none;border:1px solid #809488;padding:9px 14px;border-radius:6px}}
-.hero{{padding:68px 0 44px}}.eyebrow{{font-size:11px;text-transform:uppercase;letter-spacing:.17em;font-weight:800;color:var(--green)}}.hero h1{{font-size:clamp(40px,6vw,72px);letter-spacing:-.065em;line-height:1.02;max-width:800px;margin:18px 0}}.hero p{{font-size:18px;max-width:750px;color:#3d5147;margin:0}}.notice{{display:inline-block;background:#e6edd9;border:1px solid #c8d7ad;padding:9px 13px;border-radius:6px;margin-top:25px;font-size:13px;font-weight:700}}.hero .role-credit{{max-width:850px;margin-top:24px;padding-left:15px;border-left:3px solid var(--green);font-size:15px;line-height:1.55}}
-.metric-grid{{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:var(--card);margin:0 0 60px}}.metric{{padding:25px 27px;border-right:1px solid var(--line)}}.metric:last-child{{border:0}}.metric strong{{display:block;font-size:34px;letter-spacing:-.06em}}.metric span{{font-size:12px;color:var(--muted);font-weight:750;text-transform:uppercase;letter-spacing:.07em}}
-.section-head{{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:18px}}h2{{font-size:29px;letter-spacing:-.04em;margin:0}}.section-head p{{color:var(--muted);margin:0;max-width:470px;font-size:14px}}.cards{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:58px}}.job-card{{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:25px}}.job-top{{display:flex;align-items:start;justify-content:space-between;gap:18px}}.job-top h3{{font-size:23px;letter-spacing:-.04em;margin:4px 0 22px}}.state{{border-radius:4px;background:var(--lime);color:var(--green);font-size:11px;font-weight:800;letter-spacing:.07em;padding:7px 9px;white-space:nowrap}}.state[data-state="WAITING_WORKER"],.state[data-state="RETRY_PENDING"]{{background:#fff0ce;color:var(--amber)}}.state[data-state="FAILED"]{{background:#ffe2d9;color:#902f22}}.job-facts{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-bottom:22px}}.job-facts span{{display:block;color:var(--muted);font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.05em}}.job-facts strong,.job-facts code{{display:block;margin-top:5px;font-size:14px;overflow-wrap:anywhere}}.recovery{{margin:0 0 17px;padding:8px 10px;background:#fff3da;border-left:3px solid #b97c22;color:#62430e;font-size:12px;font-weight:700}}details{{border-top:1px solid var(--line);padding-top:13px}}summary{{cursor:pointer;font-size:13px;font-weight:800;color:var(--green)}}.timeline{{list-style:none;padding:0;margin:16px 0 0}}.timeline li{{display:flex;gap:15px;border-top:1px solid #e7ebe4;padding:10px 0;font-size:13px;font-weight:700}}.timeline b{{font-size:11px;color:var(--green);font-variant-numeric:tabular-nums}}.timeline small{{display:block;color:var(--muted);font-size:11px;font-weight:500}}
-.architecture{{background:#e5ebdd;padding:47px 0 55px}}.flow{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:22px}}.flow div{{background:var(--card);border:1px solid var(--line);padding:18px;border-radius:6px}}.flow b{{display:block;color:var(--green);font-size:12px;margin-bottom:8px}}.flow span{{font-size:14px;font-weight:700}}.method{{padding:45px 0 65px}}.method-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:22px}}.method-grid p{{font-size:14px;color:var(--muted);margin:7px 0}}.method-grid h3{{font-size:17px;margin:0}}footer{{background:#14231e;color:#b8cbbb;padding:25px 0;font-size:12px}}
-@media(max-width:800px){{.metric-grid{{grid-template-columns:repeat(2,1fr)}}.metric:nth-child(2){{border-right:0}}.metric:nth-child(-n+2){{border-bottom:1px solid var(--line)}}.cards{{grid-template-columns:1fr}}.flow{{grid-template-columns:repeat(2,1fr)}}}}
-@media(max-width:520px){{.shell{{padding:0 18px}}.mast small{{display:none}}.hero{{padding:45px 0 36px}}.hero h1{{font-size:46px}}.hero p{{font-size:16px}}.metric{{padding:17px}}.metric strong{{font-size:28px}}.job-card{{padding:18px}}.job-top{{display:block}}.job-top h3{{margin-bottom:8px}}.state{{display:inline-block;margin-bottom:20px}}.job-facts{{grid-template-columns:1fr 1fr}}.job-facts div:last-child{{grid-column:1/-1}}.flow{{grid-template-columns:1fr}}.method-grid{{grid-template-columns:1fr}}.section-head{{display:block}}}}
-@media(prefers-reduced-motion:reduce){{html{{scroll-behavior:auto}}}}
-</style></head><body><header class="mast"><div class="shell"><div class="brand">LOCAL AI <span>WORKCELL</span></div><small>ONE-COMPUTER / SYNTHETIC SIMULATION</small><nav><a href="#jobs">Job trail</a></nav></div></header>
-<main><section class="hero shell"><span class="eyebrow">Capability-routed operations · local proof</span><h1>Work moves with proof.</h1><p>A synthetic document passes through a mock OCR worker, a validation worker, and a results node. Every handoff has a state and checksum; retries and unavailable workers stay visible.</p><span class="notice">A one-computer model of owner-reported multi-machine practice. Mock OCR reads SVG text nodes; no real worker was used.</span><p class="role-credit"><strong>Operating design: Leonel.</strong> He reports designing and operating adaptable AI workflows across machines, deciding where coordination sits, routing by capability, and preserving handoffs and recovery. Leonel defined this demo's scope and acceptance checks; coding agents helped implement the synthetic proof.</p></section>
-<section class="shell" aria-label="Run totals"><div class="metric-grid"><div class="metric"><strong>{len(manifests):02}</strong><span>Jobs submitted</span></div><div class="metric"><strong>{delivered:02}</strong><span>Delivered</span></div><div class="metric"><strong>{retries:02}</strong><span>Retried</span></div><div class="metric"><strong>03</strong><span>Worker capabilities</span></div></div></section>
-<section class="shell" id="jobs"><div class="section-head"><h2>Each job has a trail</h2><p>State changes show the route and recovery. Manifests carry job IDs; redacted logs carry generic worker labels and reason codes only.</p></div><div class="cards">{''.join(cards)}</div></section>
-<section class="architecture"><div class="shell"><span class="eyebrow">The route</span><h2>Capability first, then evidence.</h2><div class="flow"><div><b>01 / COORDINATE</b><span>Deterministic ID and input checksum</span></div><div><b>02 / OCR</b><span>Deterministic SVG text-node mock</span></div><div><b>03 / VALIDATE</b><span>Source, derived and manual review separated</span></div><div><b>04 / RESULTS</b><span>Idempotent delivery with checksum</span></div></div></div></section>
-<section class="method shell"><span class="eyebrow">Operating boundary</span><h2>What this run proves</h2><div class="method-grid"><div><h3>Duplicate protection</h3><p>Submitting identical bytes returns the existing job. A delivered result is never processed twice.</p></div><div><h3>Bounded recovery</h3><p>An unavailable OCR worker waits without consuming an attempt. A simulated failure uses one of two allowed attempts.</p></div><div><h3>Honest evidence</h3><p>The demo proves orchestration mechanics only. It does not measure OCR accuracy or represent a production deployment.</p></div></div></section></main>
-<footer><div class="shell">Local AI Workcell · public synthetic proof · private operating practice is owner-reported, not reproduced here</div></footer></body></html>'''
+            events.append(
+                f"<li><strong>{event['seq']:02} {escape(event['state'])}</strong>"
+                f"<small>{worker}{code}</small></li>"
+            )
+        recovered = item["state"] == "DELIVERED" and any(
+            event.get("code") == "CAPABILITY_UNAVAILABLE" for event in item["events"]
+        )
+        recovery_note = (
+            '<p class="recovery">Worker unavailable, then recovered after one bounded retry.</p>'
+            if recovered and item["attempts"] > 1 else ""
+        )
+        jobs.append(f"""<article class="job" aria-labelledby="job-{identifier}">
+          <div class="job-head"><div><h3 id="job-{identifier}">Synthetic document</h3>
+          <span class="job-id">Job {identifier}</span></div>
+          <span class="state" data-state="{state}">{state.replace("_", " ")}</span></div>
+          <div class="job-facts"><span>OCR attempts: <strong>{item['attempts']} of {item['max_attempts']}</strong></span>
+          <span>Input hash: <strong>{escape(item['input_sha256'][:12])}…</strong></span>
+          <span>Delivery hash: <strong>{escape((item.get('delivery_sha256') or 'pending')[:12])}{'…' if item.get('delivery_sha256') else ''}</strong></span></div>
+          {recovery_note}<details><summary>View state trail</summary>
+          <ol class="timeline">{''.join(events)}</ol></details></article>""")
+    result_line = f"{delivered} of {len(manifests)} synthetic jobs delivered"
+    recovery_line = (
+        f"{waiting} waited for a worker; {retries} used a bounded retry; "
+        f"{unresolved} remain unresolved."
+    )
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A synthetic local AI workflow with capability routing, evidence handoffs, and bounded recovery.">
+<title>Local AI Workcell | Synthetic workflow proof</title>
+<style>{CSS}</style></head><body>
+<a class="skip" href="#main">Skip to workflow</a>
+<header class="mast"><div class="shell"><a class="brand" href="#main">LOCAL AI <span>WORKCELL</span></a>
+<nav aria-label="Page"><a href="#v2-proof">v0.2 process proof</a><a href="#jobs">Inspect job trail</a><a href="#ownership">Design and evidence</a></nav></div></header>
+<main id="main"><section class="hero shell" aria-labelledby="page-title">
+<div class="hero-top"><div><p class="scope-label">Local orchestration / public synthetic proof</p>
+<h1 id="page-title">Route local AI jobs by capability and verify every handoff.</h1>
+<p class="lede">Leonel designs and operates adaptable AI workflows where coordinator control can move between machines. This public walkthrough assigns fictional documents to mock OCR, validation, and results roles, with recorded waits and bounded retries.</p></div>
+<aside class="run-result" aria-label="Verified v0.1 synthetic result"><small class="proof-version">Live walkthrough · v0.1</small><strong>{result_line}</strong>
+<p>{recovery_line}</p><a class="action" href="#jobs">Inspect recovery trail</a></aside></div>
+<div class="hero-micro-route" role="img" aria-label="Synthetic request routes through coordinator and mock OCR to validation and delivery; {waiting} job waited for worker availability and {retries} retried before delivery."><div><span>Request</span><b>→</b><span>Route</span><b>→</b><span>Validate</span><b>→</b><span>Deliver</span></div><p>Unavailable ({waiting}) or retry ({retries}) returns to routing ↺</p></div>
+<div class="v2-teaser"><div><strong>Separate v0.2 process proof</strong><p>{V2_SAMPLE['delivered']} of {V2_SAMPLE['submitted']} fictional PNGs delivered through two OCR processes, one validation process, and a durable queue. One deliberate loopback interruption recovered.</p></div><a href="#v2-proof">See the process and evidence <span aria-hidden="true">↘</span></a></div>
+<figure class="route" aria-labelledby="route-title" aria-describedby="route-description">
+<figcaption id="route-title">How one synthetic job reaches a validated result</figcaption>
+<ol class="route-steps">
+<li><b>Request</b><span>Fictional SVG input</span></li>
+<li><b>Coordinator</b><span>Job ID and input hash</span></li>
+<li><b>Capability route</b><span>Select available role</span></li>
+<li><b>Mock OCR</b><span>SVG text nodes only</span></li>
+<li><b>Validate</b><span>Separate facts and review</span></li>
+<li class="result-node"><b>Deliver</b><span>Output checksum, once</span></li>
+</ol>
+<div class="route-branches"><p><strong>Unavailable:</strong> WAITING_WORKER keeps the job; it resumes when the OCR capability returns.</p>
+<p><strong>Transient failure:</strong> RETRY_PENDING returns to routing and consumes one of two allowed OCR attempts.</p></div>
+<p class="route-evidence" id="route-description">Evidence handoff: input hash → manifest and redacted state events → result hash → delivery hash. This run used {waiting} wait and {retries} retry event; all totals come from the generated manifests.</p>
+</figure>
+<p class="boundary">One computer and one Python process simulate the roles shown above. Mock OCR reads SVG text nodes; this view does not establish real OCR accuracy or multi-computer reliability.</p>
+</section>
+<section class="v2-section" id="v2-proof" aria-labelledby="v2-title"><div class="shell">
+<div class="v2-heading"><div><p class="scope-label">v0.2 / local process experiment</p><h2 id="v2-title">The queue survives the interruption.</h2><p>The coordinator accepts only committed fictional PNGs. Two OCR worker processes call Tesseract; a separate validation worker checks the known synthetic labels. All workers register over authenticated loopback connections on one computer.</p></div><div class="v2-observation"><strong>{V2_SAMPLE['delivered']}/{V2_SAMPLE['submitted']} delivered</strong><span>{V2_SAMPLE['transport_interruptions']} interrupted connection · {V2_SAMPLE['recovered_jobs']} recovered job · {V2_SAMPLE['max_simultaneous_ocr_leases']} concurrent OCR leases</span></div></div>
+<div class="v2-flow" role="img" aria-label="Synthetic PNG enters a durable SQLite queue, two OCR processes compete for work, a validation process checks the result, and one delivery is recorded. A dropped worker connection returns the job to the queue.">
+<div><b>01</b><strong>Submit</strong><span>Fixed synthetic PNG</span></div><div><b>02</b><strong>Durable queue</strong><span>SQLite claim + restart recovery</span></div><div class="v2-worker"><b>03</b><strong>OCR workers ×2</strong><span>Separate processes · Tesseract</span></div><div><b>04</b><strong>Validate</strong><span>Separate worker process</span></div><div class="v2-result"><b>05</b><strong>Deliver once</strong><span>Result hash + terminal state</span></div></div>
+<p class="v2-return"><strong>Recovery loop:</strong> a deliberate connection drop returns one claimed job to the queue; another worker finishes it within the two-attempt limit. A coordinator restart also requeues in-flight work.</p>
+<div class="v2-links"><a href="docs/V2_PROOF.md">Method and limits</a><a href="docs/v2-sample-report.json">Inspect the synthetic report</a></div>
+<p class="boundary">This observed run used Python 3.14 and {escape(V2_SAMPLE['ocr_engine'])}. Its {V2_SAMPLE['elapsed_ms']} ms elapsed time is one local observation, not a benchmark. No remote machine or private input was used.</p>
+</div></section>
+<section class="section shell" id="jobs" aria-labelledby="jobs-title"><h2 id="jobs-title">Inspect the state trail</h2>
+<p class="section-intro">Each card shows the terminal state, attempts, and checksum excerpts. Open a trail to see exactly where the synthetic job waited, retried, and delivered.</p>
+<div class="jobs">{''.join(jobs)}</div></section>
+<section class="ownership" id="ownership"><div class="section shell"><h2>Design ownership and proof boundary</h2>
+<div class="ownership-grid"><div><h3>Leonel's operating design</h3><p>Leonel reports designing and operating adaptable AI workflows across machines. He decides where coordination sits, routes by capability, and preserves handoffs and recovery. He set this public demo's scope and acceptance checks; coding agents assisted with implementation.</p></div>
+<div><h3>What this repository verifies</h3><p>Its synthetic tests cover deterministic IDs, legal state changes, waiting, bounded retry, duplicate protection, checksums, and delivery. Reproduce the local run and inspect the source before treating any broader private practice as independently verified.</p></div></div></div></section>
+<section class="section shell" aria-labelledby="next-title"><h2 id="next-title">What to examine next</h2><ul class="proof-list">
+<li>Reproduce this one-process baseline with the commands in the repository README.</li>
+<li>Reproduce the separate v0.2 local process experiment for authenticated workers, durable queue recovery, and Tesseract OCR on public synthetic images. Its evidence remains separate from this baseline.</li>
+<li><a href="https://github.com/T-Crypt/berth">Berth</a> is a source-reviewed GPU contention research candidate, not installed or validated here. Any use requires a disposable controlled pilot.</li>
+</ul></section></main>
+<footer><div class="shell">Local AI Workcell · fictional inputs only · no private operating records</div></footer>
+</body></html>
+"""

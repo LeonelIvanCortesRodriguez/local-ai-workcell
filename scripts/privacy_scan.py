@@ -6,8 +6,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-EXCLUDED = {".git", "__pycache__", ".pytest_cache", "_demo", "release", "node_modules", "test-results"}
-BINARY = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".zip"}
+EXCLUDED = {".git", "__pycache__", ".pytest_cache", "_demo", "_tmp", "out", "out-v2", "release", "node_modules", "test-results", ".venv"}
+BINARY = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".zip", ".sqlite3", ".db"}
 slash = chr(92)
 patterns = {
     "Windows user path": re.compile(r"[A-Za-z]:" + re.escape(slash) + "Users" + re.escape(slash) + r"[A-Za-z0-9_.-]+", re.I),
@@ -30,7 +30,10 @@ for path in sorted(ROOT.rglob("*")):
         continue  # This file contains the detector expressions themselves.
     data = path.read_text(encoding="utf-8")
     for label, pattern in patterns.items():
-        if pattern.search(data):
+        matches = pattern.findall(data)
+        if label == "IPv4 address":
+            matches = [value for value in matches if value != "127.0.0.1"]
+        if matches:
             findings.append((path.relative_to(ROOT).as_posix(), label))
 if findings:
     raise SystemExit("PRIVACY_SCAN_FAIL " + "; ".join(f"{name}: {label}" for name, label in findings))

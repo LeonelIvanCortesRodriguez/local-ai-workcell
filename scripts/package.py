@@ -8,8 +8,8 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-FILES = (".gitattributes", ".gitignore", "README.md", "LICENSE", "SECURITY.md", "THIRD_PARTY_NOTICES.md", "pyproject.toml", "index.html")
-DIRECTORIES = ("workcell", "fixtures", "tests", "scripts", "docs")
+FILES = (".gitattributes", ".gitignore", "README.md", "PRODUCT.md", "DESIGN.md", "LICENSE", "SECURITY.md", "THIRD_PARTY_NOTICES.md", "pyproject.toml", "index.html")
+DIRECTORIES = (".github", "workcell", "fixtures", "tests", "scripts", "docs")
 SKIP = {"__pycache__", ".pytest_cache", "test-results"}
 
 

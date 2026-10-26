@@ -1,6 +1,6 @@
 [project]
 name = "local-ai-workcell-demo"
-version = "0.1.0"
-description = "Synthetic single-computer capability-routing demonstration"
+version = "0.2.0"
+description = "Synthetic local capability-routing and multi-process OCR proof"
 requires-python = ">=3.11"
 dependencies = []
