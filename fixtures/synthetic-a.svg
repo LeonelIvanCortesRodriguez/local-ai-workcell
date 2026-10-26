@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="540" viewBox="0 0 860 540" role="img" aria-label="Synthetic demonstration document A">
+  <rect width="860" height="540" fill="#f5f3eb"/>
+  <rect x="72" y="64" width="716" height="412" rx="12" fill="#fff" stroke="#cbd4ca"/>
+  <text x="112" y="134" font-family="Arial" font-size="18" fill="#185c47">SYNTHETIC DEMO</text>
+  <text x="112" y="212" font-family="Arial" font-size="34" fill="#14231e">Project packet A</text>
+  <text x="112" y="285" font-family="Arial" font-size="20" fill="#52645c">Task: prepare a sample handoff</text>
+  <text x="112" y="335" font-family="Arial" font-size="20" fill="#52645c">Review state: draft</text>
+  <text x="112" y="414" font-family="Arial" font-size="14" fill="#7b8a80">Fictional fixture. No private source.</text>
+</svg>
