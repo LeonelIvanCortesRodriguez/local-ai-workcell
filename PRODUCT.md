@@ -4,45 +4,65 @@
 
 product
 
+## Product promise
+
+A small local system that sends each document job to a worker that can do it, records every handoff, and recovers when a worker drops out.
+
 ## Users
 
-Engineering and AI-operations directors assessing Leonel's ability to design, operate, and explain adaptable workflows across machines. They need a public, reproducible example without access to his private operating environment.
+Engineering and AI-operations leaders deciding whether Leonel can design and run controlled AI workflows. They arrive from a CV link or a GitHub profile, give the page a few seconds, and need to see a working system and its limits before they read any code. A second reader is the engineer who opens the repository to check whether the claims hold.
 
-## Product Purpose
+## The problem in one paragraph
 
-Show how a coordinator accepts work, routes by capability, preserves handoff evidence, validates the result, and recovers from an unavailable worker or bounded failure. The live baseline runs in one Python process on fictional SVG fixtures. A separate local v0.2 proof uses authenticated loopback workers, a persistent queue, and real OCR on fixed synthetic PNGs.
+When AI work is spread over machines with different abilities (one has the OCR engine, another the GPU, another the validator), jobs get lost between them. The operator cannot easily say where a job is, whether it finished, what changed it, or how to resume it. A result without a reliable handoff record is hard to trust.
 
-## Five-second question
+## What moves through the cell
 
-Where does a job go, what happens when a worker fails, and why can the result be trusted within the demo's boundary?
+| Stage | What happens | Where it is proven |
+| --- | --- | --- |
+| Controlled input | Only fictional fixtures are admitted (SVG in v0.1, three PNGs in v0.2). The job ID derives from the input bytes. | `workcell/core.py`, `workcell/v2.py`, tests |
+| Coordinator | Assigns work by capability label, not by machine name. | `tests/test_workcell.py` |
+| Specialized worker | v0.1: mock OCR that reads SVG text nodes. v0.2: Tesseract in separate worker processes. | `tests/test_v2.py`, `docs/v2-sample-report.json` |
+| Validation | Keeps source hashes, derived counts, and the manual-review flag in separate fields. | results JSON, tests |
+| Checked output | Delivered once, with an output checksum. A duplicate submission returns the existing job. | mutation check, tests |
+| Recovery | Waiting for a missing worker, bounded retry, coordinator restart, and a deliberate loopback disconnect. | v0.1 and v0.2 tests, sample report |
 
-## First decision
+## Evidence status
 
-Inspect the state trail and reproduce either local proof; then decide whether remote-worker transport merits a controlled pilot.
+- **Implemented and tested:** everything in the table above, on one computer.
+- **Observed once:** the v0.2 sample report (2026-10-26, Python 3.14.5, Tesseract 5.5.0). It records three delivered jobs, one recovered interruption, and two simultaneous OCR leases. Its timing is one run, not a benchmark.
+- **Owner-reported, not verified here:** Leonel's private multi-machine practice, in which the coordinator role moves between machines.
+- **Planned:** remote worker transport, real network partition tests, broader OCR corpora, GPU contention control.
+- **Unsupported, never claim:** general OCR accuracy, multi-computer reliability, production security, quantified operational outcomes.
 
-## Verified evidence
+## Leonel's contribution
 
-The committed static status page is generated from the deterministic v0.1 run. Tests cover job identity, capability routing, waiting, bounded retry, duplicate protection, checksum validation, and delivery. The v0.2 sample report and integration tests cover three local worker processes, authentication rejection, queue restart recovery, a loopback interruption, concurrent OCR leases, and Tesseract on fixed synthetic images. The graphic and summary values must derive from their respective run evidence.
+Leonel made the operating decisions: where coordination sits, how work is assigned by capability, and which handoff and recovery evidence an operator needs. He set the public proof scope, the fictional fixtures, the failure cases, and the acceptance checks. Coding agents helped implement the source, interface, and tests. The presentation must say this plainly, once, without inflating or hiding either part.
 
-## Limitations and prohibited claims
+## Five-second test
 
-The owner reports a living private multi-machine practice, but this public code does not verify its topology or outcomes. v0.1 mock OCR reads SVG text nodes. v0.2 runs on one host with authenticated loopback connections; it does not prove remote transport security, real network partition recovery, general OCR accuracy, production security, or measured real-machine reliability. Berth is an adjacent E0 research candidate, not installed or part of either run.
+After five seconds on the README or the live page, a reader should be able to say: "It routes document jobs to local workers, records each handoff, and recovers from failures. It is a local synthetic proof, and I can run it."
 
-## Brand Personality
+## Brand personality
 
-Clear, technical, and accountable. Credit Leonel's operating design confidently while identifying coding-agent assistance and the public proof boundary.
+Machined, labeled, accountable. The feel of a well-marked workshop cell: every station has a plate, every route is drawn, and the safety boundary is painted on the floor. Confident about what is proven, precise about where proof stops.
 
 ## Anti-references
 
-Avoid an abstract slogan, a row of decorative counters, tiny synthetic terminal text, copied harness mascots, and implied multi-machine live metrics. Use the supplied diagram only for named actors, directional handoffs, feedback, and final state.
+- Generic "AI agent platform" visuals: glowing nodes, neural meshes, robot or brain imagery, purple gradients.
+- Terminal-cosplay heroes with green-on-black text that the system never prints.
+- Live-ops dashboards with counters that imply a fleet of machines.
+- A dashboard screenshot inside a decorative browser frame as the hero.
+- Copying the Obsidian Second Brain, Dittofeed, Plasmic, or SpeakoFlow artwork, palettes, or layouts. Their lesson (identity, one promise, a visual explanation, then proof) is the only thing borrowed.
 
-## Design Principles
+## Design principles
 
-1. State the workflow literally in the first line.
-2. Make the normal route and recovery route visible together.
-3. Tie every outcome to the synthetic manifest and tests.
-4. Give the viewer an inspectable next action.
+1. **Draw the cell, not the AI.** The first visual is the route a job takes and the boundary it stays inside.
+2. **Show the failure path beside the normal path.** Recovery is the point; it is never a footnote.
+3. **Every number comes from a manifest or report.** No figure is typed into copy by hand.
+4. **Mark the boundary where the proof stops.** "One computer, fictional inputs" sits next to the claim it limits.
+5. **End every screen with something to inspect.** A trail, a report, or a command.
 
-## Accessibility & Inclusion
+## Accessibility & inclusion
 
-Target WCAG AA, readable 16px body copy, named diagram plus text equivalent, visible focus, 44px controls, no color-only state, reduced motion, and usable desktop/mobile widths.
+WCAG 2.2 AA for text and controls in both themes. Body text at least 16px. State is carried by shape, label, and line pattern as well as color. Diagrams have an accessible name and an adjacent text equivalent. Visible focus, 44px primary targets, full keyboard operation, `prefers-reduced-motion` honored, and no horizontal overflow from 390px to 1440px.
