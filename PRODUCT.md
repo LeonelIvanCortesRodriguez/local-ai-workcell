@@ -4,6 +4,12 @@
 
 product
 
+## Surface registers
+
+The default register above governs the generated status page (`index.html`, `workcell/view.py`, `workcell/status.css`). Work on that surface loads Impeccable's product reference (`reference/product.md`).
+
+The README hero, GitHub social preview, demonstration recordings, and any portfolio landing page are brand surfaces. Work on those loads the brand reference (`reference/brand.md`), and brand permissions (committed or drenched color, display type, art direction) apply only there. Brand surfaces still keep every claim and evidence boundary in this file.
+
 ## Product promise
 
 A small local system that sends each document job to a worker that can do it, records every handoff, and recovers when a worker drops out.

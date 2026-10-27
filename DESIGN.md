@@ -22,13 +22,14 @@ All values OKLCH. Contrast measured with WCAG 2.x relative luminance (`scripts/c
 | `--ink` | `0.22 0.012 260` | `0.95 0.004 260` | Text, routes, delivered state |
 | `--ink-2` | `0.40 0.012 260` | `0.78 0.008 260` | Secondary text |
 | `--line` | `0.62 0.01 260` | `0.52 0.01 260` | Plate borders, waiting outlines |
-| `--boundary` | `0.86 0.17 95` | `0.84 0.16 95` | The local cell boundary. Fill only, never text |
+| `--boundary` | `0.86 0.17 95` | `0.84 0.16 95` | The local cell boundary. A fill, never a text color |
+| `--boundary-ink` | `0.22 0.012 260` | `0.18 0.008 260` | Text and hatch stripes placed on the yellow fill, in both themes |
 | `--evidence` | `0.47 0.13 255` | `0.76 0.11 250` | Hashes, manifests, recorded evidence; also focus ring |
 | `--fail` | `0.50 0.17 28` | `0.74 0.14 28` | Failed or rejected only |
 
-Measured: ink on bg 16.1:1 light / 16.3:1 dark; ink-2 8.6:1 / 8.7:1; text on boundary 11.3:1 / 11.5:1; evidence 6.9:1 / 8.1:1; fail 6.5:1 / 7.1:1; line against surface 3.6:1 / 3.1:1 (non-text minimum 3:1).
+`scripts/contrast_check.py` reads this table and tests every named foreground and background pair in both themes; its output is retained in `docs/CONTRAST_CHECK.txt`. The dark theme's `--ink` is a light color and must never be placed on `--boundary`; that pairing measures 1.4:1. Only `--boundary-ink` goes on yellow.
 
-Yellow means the boundary and nothing else. It is never used for "warning", "waiting", or decoration.
+Yellow means the boundary and nothing else. It is never used for "warning", "waiting", or decoration. The boundary is always drawn as yellow with `--boundary-ink` hatch stripes. On the light floor the hatch supplies the 3:1 edge that yellow alone would not; on the dark floor the yellow itself does.
 
 ## State language
 
@@ -65,7 +66,7 @@ Every state has a shape, a word, and a line style. Color is the fourth cue, not 
 - Arrows are labeled with what they carry: "input hash", "manifest event", "result hash", "delivery hash". An unlabeled arrow means the diagram is unfinished.
 - The v0.2 diagram is a separate figure with the same grammar: SQLite queue as a shelf, two OCR plates, one validation plate, and the broken-segment disconnect with "requeued" label.
 - Every diagram ships as SVG with `<title>` and `<desc>`, plus a text equivalent in the README directly below it.
-- The text "one computer · fictional inputs" sits on the boundary line itself, so the limit is part of the picture.
+- The text "one computer · fictional inputs" sits on a solid yellow label tab cut into the boundary line, set in `--boundary-ink`, so the limit is part of the picture.
 
 ## Media treatment
 
