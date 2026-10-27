@@ -10,7 +10,7 @@ Apply these on github.com after the presentation commit is published. They are r
 
 ## Social preview
 
-Settings → General → Social preview → upload `docs/brand/social-preview.png` (1280 × 640, 61KB). Its alt text, for posts that ask for it: "Local AI Workcell. Send each document job to a worker that can do it, and keep proof of every handoff. A yellow and graphite hatched border frames the card; the route reads input, coordinator, ocr, validation, results, delivered."
+Settings → General → Social preview → upload `docs/brand/social-preview.png` (1280 × 640, 63KB). Its alt text, for posts that ask for it: "Local AI Workcell. Send each document job to a worker that can do it, and keep proof of every handoff. A yellow and graphite hatched border frames the card; the route reads input, coordinator, ocr, validation, results, delivered."
 
 ## Pages
 

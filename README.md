@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/brand/hero-dark.png">
-  <img src="docs/brand/hero-light.png" width="1280" alt="Local AI Workcell. Send each document job to a worker that can do it, and keep proof of every handoff. Diagram: a fictional input enters a yellow-bordered local cell, passes coordinator, ocr-node, validation-node, and results-node, and leaves as a checked output. Each station records a hash on an evidence rail. A dashed loop from ocr-node back to the coordinator shows the WAITING_WORKER and RETRY_PENDING recovery states.">
+  <img src="docs/brand/hero-light.png" width="1280" alt="Local AI Workcell. Send each document job to a worker that can do it, and keep proof of every handoff. For operators who need to know where each AI job is and whether to trust the result. Diagram: a fictional input enters a yellow-bordered local cell, passes coordinator, ocr-node, validation-node, and results-node, and leaves as a checked output. Each station records a hash on an evidence rail. A dashed loop from ocr-node back to the coordinator shows the WAITING_WORKER and RETRY_PENDING recovery states.">
 </picture>
 
 **[Open the live walkthrough](https://leonelivancortesrodriguez.github.io/local-ai-workcell/)** · [Run it locally](#run-it-locally) · [v0.2 process proof](docs/V2_PROOF.md)
