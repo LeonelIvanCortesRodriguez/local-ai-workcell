@@ -1,85 +1,115 @@
-# Local AI Workcell
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/hero-dark.png">
+  <img src="docs/brand/hero-light.png" width="1280" alt="Local AI Workcell. Send each document job to a worker that can do it, and keep proof of every handoff. Diagram: a fictional input enters a yellow-bordered local cell, passes coordinator, ocr-node, validation-node, and results-node, and leaves as a checked output. Each station records a hash on an evidence rail. A dashed loop from ocr-node back to the coordinator shows the WAITING_WORKER and RETRY_PENDING recovery states.">
+</picture>
 
-**[View the live walkthrough](https://leonelivancortesrodriguez.github.io/local-ai-workcell/)** · **[Inspect the v0.2 process proof](docs/V2_PROOF.md)**
+**[Open the live walkthrough](https://leonelivancortesrodriguez.github.io/local-ai-workcell/)** · [Run it locally](#run-it-locally) · [v0.2 process proof](docs/V2_PROOF.md)
 
 [![Verify synthetic Workcell](https://github.com/LeonelIvanCortesRodriguez/local-ai-workcell/actions/workflows/verify.yml/badge.svg)](https://github.com/LeonelIvanCortesRodriguez/local-ai-workcell/actions/workflows/verify.yml)
 
-Leonel designs and operates adaptable AI workflows across machines. This public repository makes the control pattern inspectable: route work by capability, retain evidence at each handoff, recover an interrupted job, and deliver a validated result. The live page shows a one-process mock-OCR baseline. A separate v0.2 experiment uses three local worker processes, authenticated loopback registration, a persistent SQLite queue, and real Tesseract OCR on fictional PNGs. Neither is a reproduction of the private system.
+A small local system that sends each document job to a worker that can do it, records every handoff, and recovers when a worker drops out. It is a public, synthetic proof: one computer, fictional inputs, and tests anyone can rerun.
 
-The `0.2.0` source contains both the v0.1 walkthrough and v0.2 experiment. The earlier public baseline was not tagged as a `v0.1.0` release. The [release procedure](docs/RELEASE.md) specifies the tag, ZIP, inventory, CI gate, and rollback. A GitHub release is created only after the workflow passes on this source commit.
+## The problem
 
-![Synthetic workcell status at desktop width](docs/images/workcell-desktop.png)
+When AI work is spread over machines with different abilities (one has the OCR engine, another the GPU, another the validator), jobs get lost between them. The operator can't easily say where a job is, whether it finished, what changed it, or how to resume it. A result without a reliable handoff record is hard to trust.
 
-## The operating problem
+## See it recover
 
-When machines have different capabilities, the operator needs to know where a job went, whether it finished, what changed, and how to recover it. A result without a reliable handoff is hard to trust. The coordinator is a movable control role, not a fixed physical machine. This demonstration turns the control pattern into a small, inspectable workflow.
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="docs/brand/replay-poster.png">
+  <img src="docs/brand/replay.gif" width="960" alt="Replay of synthetic job 480a7caaea1a, one frame per recorded event: NEW at the coordinator, WAITING_WORKER because no OCR worker is available, ROUTED to ocr-node, RETRY_PENDING after one simulated transient failure, ROUTED again, OCR_DONE, VALIDATED at validation-node, and DELIVERED at results-node.">
+</picture>
 
-### What Leonel designed and validated
+One job from the committed fixtures, replayed from its manifest: it waits for a missing OCR worker without spending an attempt, fails once, is routed again, and is delivered on its second and final attempt. The other job goes straight through. [MP4 version](docs/brand/replay.mp4).
 
-- **Operating decisions:** where coordination sits, how work is assigned by capability, and which handoff and recovery evidence an operator needs. The coordinator role can move between machines in Leonel's owner-reported private practice.
-- **Public proof scope:** the fictional fixtures, privacy boundary, failure cases, and acceptance checks for both demonstrations.
-- **Implementation assistance:** coding agents helped implement the public source, interface, and automated checks. The source and reproducible tests are available for independent inspection.
-- **What the retained checks establish:** v0.1 state and checksum behavior; v0.2 durable queue recovery, authenticated local registration, concurrent OCR leases, a simulated loopback interruption, and OCR of fixed public images. These checks do not verify the private topology or its operational outcomes.
+## How the workflow runs
 
-## Evidence map
+1. **Controlled input.** Only fictional fixtures are admitted: two SVGs for v0.1, three PNGs for v0.2. The job ID derives from the input bytes and pipeline version, so a duplicate submission returns the existing job.
+2. **Coordinator.** Routes by capability label (`ocr-node`, `validation-node`, `results-node`), never by hostname. In this demo the coordinator and every worker share one Python process.
+3. **OCR.** v0.1 uses a mock that reads SVG text nodes; it recognizes no pixels. v0.2 calls Tesseract from separate worker processes.
+4. **Validation.** Keeps source hashes, derived counts, and a required manual-review flag in separate fields. Mock OCR says nothing about accuracy, so manual review stays required.
+5. **Checked output.** Delivered once, with an output checksum.
+6. **Recovery.** A missing worker puts the job in `WAITING_WORKER`, where it keeps its place without using an attempt. A transient failure moves it to `RETRY_PENDING`; the second attempt either succeeds or ends at `FAILED`.
 
-| Category | What is stated or shown | Evidence boundary |
+Every station records a hash in the manifest. State events are redacted: they hold state, phase, generic worker label, and reason code, but no document text or local path. See the [architecture and state map](docs/ARCHITECTURE.md).
+
+## Result and evidence
+
+| Status | What it covers | Where to check |
 | --- | --- | --- |
-| Owner-reported operating practice | A living multi-machine workflow supports remote tasks, capability-specific OCR, result transfer, Git coordination, and Docker-dependent work. Coordinator control can move between machines. | This is the owner's account of private practice. The public repository does not independently verify its topology, reliability, or outcomes. |
-| Public v0.1 baseline | One Python process routes two fictional SVG jobs through mock OCR, validation, and results roles. Tests exercise identity, waiting, retry, duplicate protection, checksums, and delivery. | Run the commands below and inspect the synthetic manifests, results, and status view. The live Pages site shows this baseline. |
-| Public v0.2 process proof | Two OCR processes and one validation process register with an authenticated local coordinator. A SQLite queue survives restart, one loopback connection deliberately drops, and Tesseract reads three fictional PNGs. | Run the v0.2 command and inspect the [retained sample report](docs/v2-sample-report.json) and [method](docs/V2_PROOF.md). This is local-only, not a distributed deployment. |
-| Future research | Remote worker transport, real network partition behavior, broader OCR corpora, and GPU contention control. | Proposed only. Berth is a source-reviewed research candidate, not installed or validated here. |
+| Implemented and tested | v0.1: deterministic IDs, capability routing, legal state changes, waiting, bounded retry, duplicate protection, checksums, delivery | `python -m unittest`, [`tests/test_workcell.py`](tests/test_workcell.py) |
+| Implemented and tested | v0.2: three local worker processes, authenticated loopback registration, rejection of an invalid key, durable SQLite queue, restart recovery, a deliberate connection drop, Tesseract on three fixed images | `WORKCELL_V2_INTEGRATION=1` tests, [`tests/test_v2.py`](tests/test_v2.py) |
+| Observed once | 3 of 3 PNGs delivered, 1 interrupted connection recovered, 2 simultaneous OCR leases, 1030 ms elapsed (Python 3.14.5, Tesseract 5.5.0, 2026-10-26). One run, not a benchmark | [`docs/v2-sample-report.json`](docs/v2-sample-report.json) |
+| Owner-reported, not verified here | Leonel's private multi-machine practice, where the coordinator role moves between machines | No public evidence |
+| Planned | Remote worker transport, real network partitions, broader OCR corpora, GPU contention control | [Berth](https://github.com/T-Crypt/berth) is a source-reviewed candidate only |
 
-## Inspect it in five minutes
+A mutation check changes a delivered v0.1 result and requires checksum verification to reject it.
 
-The v0.1 walkthrough requires Python 3.11 or newer and no runtime dependencies or paid services.
+## Product views
+
+<img src="docs/brand/view-trail.png" width="1240" alt="Annotated capture of the job card for job 480a7caaea1ae818 with its eight-event state trail open. Notes: the recovered job is open by default and has a heavier border; waiting is a dashed outline with a clock, retry a circular arrow, delivered a filled square; every line is read from the manifest.">
+
+<img src="docs/brand/view-v2.png" width="1240" alt="Annotated capture of the v0.2 section: submit, durable queue, two OCR worker processes, a dropped connection that is requeued, then validation and delivery, beside an observation box reading 3 of 3 delivered. Notes explain the Tesseract workers, the requeued connection drop, and that the elapsed time is one local run.">
+
+<img src="docs/brand/view-mobile.png" width="940" alt="Annotated capture of the status page at 390 pixels wide: the promise, the delivered count, and both action buttons fit the first screen, and the route diagram turns vertical below them.">
+
+## Leonel's role and decisions
+
+**Problem chosen.** Make a multi-machine AI workflow inspectable without exposing the private environment it comes from.
+
+**Role.** Leonel made the operating decisions, set the public proof scope and fictional fixtures, chose the failure cases, and wrote the acceptance checks. Coding agents helped implement the source, the status page, and the tests.
+
+**Decisions that shape the system**
+
+- *Route by capability, not by machine.* Workers are named for what they can do, so the coordinator role can move between machines.
+- *Waiting is not failure.* A missing worker costs no attempt; the job keeps its place.
+- *Bounded retry.* Two OCR attempts, then `FAILED`, so nothing loops.
+- *Hash every handoff.* Input, OCR, result, and delivery hashes make a changed result detectable.
+- *Keep manual review on.* The result says when its evidence can't support an accuracy claim.
+
+**Constraints.** Public and reproducible; no private documents, hostnames, credentials, or logs; Python standard library at runtime; no paid service.
+
+**Observed results.** All 16 tests pass with integration enabled. The sample v0.2 run delivered 3 of 3 fictional PNGs and recovered the deliberate disconnect.
+
+**Technologies.** Python 3.11 to 3.14 (standard library), SQLite, `multiprocessing.connection` with authenticated loopback, Tesseract (optional, not bundled), GitHub Actions, and a generated static HTML status page.
+
+## Limitations
+
+One computer. Fictional inputs. No remote node, TLS, distributed consensus, production credential store, arbitrary upload, or private document. The connection drop is deliberate and local; it does not prove recovery from a real network partition. Nothing here establishes general OCR accuracy, multi-computer reliability, production security, or operational outcomes. The privacy scan is a bounded detector, so the public package still needs human review.
+
+## Run it locally
+
+The v0.1 walkthrough needs Python 3.11 or newer and nothing else.
 
 ```bash
 python -m workcell.cli demo --output out
 python -m workcell.cli verify --output out
 ```
 
-Open `out/index.html` in a browser. The committed [static example](index.html) shows the same synthetic run. The first job delivers directly. The second waits for an unavailable OCR worker, then recovers after one simulated transient failure. Both have deterministic IDs, bounded attempts, checksums, and redacted state trails.
+Open `out/index.html`. The output directory must be absent or empty. The committed [`index.html`](index.html) is the same synthetic run; refresh it with `python scripts/refresh_demo.py`.
 
-The output directory must be absent or empty. Delete your own `out/` directory before rerunning the demo. To refresh the committed static view from the fixtures, run `python scripts/refresh_demo.py`.
-
-### Reproduce the v0.2 process proof
-
-Install Tesseract from its official package for your platform, then run:
+For v0.2, install Tesseract from its official package, then:
 
 ```bash
 python -m workcell.v2 demo --output out-v2
 ```
 
-The command prints delivered, interruption, recovery, concurrent-lease, and elapsed observations. `out-v2/report.json` records the bounded synthetic run; the SQLite queue remains in `out-v2/queue.sqlite3` so its terminal state can be inspected. See [v0.2 proof and limits](docs/V2_PROOF.md). Tesseract and Pillow are not bundled; Pillow is used only by an optional fixture-regeneration script on Windows.
+It prints delivered, interruption, recovery, concurrent-lease, and elapsed observations, writes `out-v2/report.json`, and leaves `out-v2/queue.sqlite3` for inspection. See [v0.2 proof and limits](docs/V2_PROOF.md).
 
-## What the workflow does
-
-1. A movable coordinator role accepts only synthetic SVG fixtures beginning with `SYNTHETIC DEMO`. In this demo it runs in the same Python process as every worker. The job ID derives from the document bytes and pipeline version.
-2. Capability routing selects generic `ocr-node`, `validation-node`, and `results-node` labels. No hostname or remote connection is involved.
-3. The OCR stage reads SVG text nodes as a **mock**. It does not recognize pixels, PDFs, or handwriting.
-4. Validation produces a result that separates source checksums, derived counts, and a required manual-review flag.
-5. The results stage delivers once, checks for conflicts, and records an output checksum. Duplicate submission returns the existing job without another delivery.
-
-See the [architecture and state map](docs/ARCHITECTURE.md) for the recovery path and manifest schema.
-
-## Verify the controls
+### Verify
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -v      # set WORKCELL_V2_INTEGRATION=1 for socket and OCR tests
 python tests/mutation_check.py
 python scripts/privacy_scan.py
+python scripts/contrast_check.py
 python scripts/package.py --output release
 ```
 
-For the socket and OCR integration tests, set `WORKCELL_V2_INTEGRATION=1` before running `unittest`. The [GitHub Actions workflow](.github/workflows/verify.yml) is configured for Python 3.11–3.14 to run the mutation and privacy checks, regenerate the static page, verify both demos, and compare two release packages. Its badge reports GitHub's actual CI state; a local pass is not a CI pass. The mutation test changes a delivered v0.1 result and requires checksum verification to reject it. The package command creates a deterministic allowlisted ZIP and SHA-256 inventory. The privacy scan is a bounded detector; independent review of the public package remains necessary.
+The [workflow](.github/workflows/verify.yml) runs these on Python 3.11 to 3.14, regenerates the status page, runs both demos, and builds the package twice to confirm it is deterministic. The badge shows GitHub's actual CI state; a local pass is not a CI pass. The [release procedure](docs/RELEASE.md) covers the `v0.2.0` tag, ZIP, inventory, and rollback.
 
-## Evidence and privacy boundary
+## Privacy, assets, and license
 
-The repository proves orchestration behavior in local simulations: deterministic identity, capability routing, legal state changes, bounded retry, waiting and recovery, duplicate protection, checksum validation, and a status view. v0.2 additionally proves local process coordination and the adapter connection to Tesseract on three fixed images. It does **not** prove general OCR accuracy, multi-computer reliability, production security, or quantified operational outcomes. The v0.1 retained event log contains state, phase, generic worker label, and reason code. It contains no job ID, document text, or local path; the job ID is in the manifest and its parent directory. The v0.2 sample report contains synthetic job IDs, hashes, generic worker labels, and measured local timings, but no recognized text or local path.
+Every SVG and PNG fixture is fictional and was made for this repository. No private document, real node identity, credential, operational log, or personal screenshot is included. Read [SECURITY.md](SECURITY.md).
 
-The two SVG documents and three PNG images are fictional and were created for this release. No private document, real-node identity, credential, operational log, or personal screenshot is included. Read [SECURITY.md](SECURITY.md) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
-## License
-
-Owner-authored source, documentation, fixtures, and status-view images are released under the [MIT License](LICENSE). See [third-party notices](THIRD_PARTY_NOTICES.md) for development tools used to capture screenshots.
+The README and social images are rendered from the same diagram code as the status page (`python design/compose.py`, then `node design/render.mjs`; see [design/README.md](design/README.md)). Owner-authored code, documentation, fixtures, and images are under the [MIT License](LICENSE). Archivo and Martian Mono are bundled under the SIL Open Font License; see [third-party notices](THIRD_PARTY_NOTICES.md).

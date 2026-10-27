@@ -7,3 +7,5 @@ out/
 release/
 test-results/
 .venv/
+design/build/
+design/node_modules/

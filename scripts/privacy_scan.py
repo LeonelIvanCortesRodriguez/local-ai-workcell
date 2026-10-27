@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 EXCLUDED = {".git", "__pycache__", ".pytest_cache", "_demo", "_tmp", "out", "out-v2", "release", "node_modules", "test-results", ".venv"}
-BINARY = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".zip", ".sqlite3", ".db"}
+BINARY = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".zip", ".sqlite3", ".db", ".woff2", ".mp4"}
 slash = chr(92)
 patterns = {
     "Windows user path": re.compile(r"[A-Za-z]:" + re.escape(slash) + "Users" + re.escape(slash) + r"[A-Za-z0-9_.-]+", re.I),

@@ -1,0 +1,8 @@
+{
+  "name": "local-ai-workcell-design",
+  "private": true,
+  "type": "module",
+  "description": "Optional tooling that renders README, social, and demo assets",
+  "scripts": { "render": "node render.mjs" },
+  "devDependencies": { "playwright-core": "1.62.1" }
+}
