@@ -46,7 +46,7 @@ h1 { max-width: none; margin: 26px 0 8px; font-size: 38px; line-height: 1.12; }
     body = f"""<div class="canvas"><div class="top"><div class="id">{mark_svg(44)}<span class="wordmark">Local AI Workcell</span></div>
 <span class="tag">Python · local synthetic proof</span></div>
 <h1>{escape(PROMISE)}</h1>
-<p class="sub">Capability routing, a hash at each handoff, and recovery when a worker is missing or fails once.</p>
+<p class="sub">For operators who need to know where each AI job is and whether to trust the result: capability routing, a hash at each handoff, and recovery.</p>
 {wide_svg("hero")}</div>"""
     return page("Local AI Workcell hero", css, body)
 

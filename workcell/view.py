@@ -78,7 +78,7 @@ def render_status(manifests: list[dict]) -> str:
 <nav aria-label="Page"><a href="#how">How it works</a><a href="#jobs">Recovery trail</a><a href="#v2-proof">v0.2 process proof</a><a href="#role">Leonel's role</a></nav></div></header>
 <main id="main"><section class="hero shell" aria-labelledby="page-title">
 <h1 id="page-title">Send each document job to a worker that can do it, and keep proof of every handoff.</h1>
-<p class="lede">A coordinator routes fictional documents to OCR, validation, and results workers by capability, records a hash at each handoff, and recovers when a worker is missing or fails once. Leonel designed the operating pattern and its checks. It runs on one computer.</p>
+<p class="lede">For anyone who has to say where an AI job is and whether its result can be trusted. A coordinator routes fictional documents to OCR, validation, and results workers by capability, records a hash at each handoff, and recovers when a worker is missing or fails once. Leonel designed the operating pattern and its checks. It runs on one computer.</p>
 <div class="result"><p class="result-line">{state_glyph('DELIVERED')}<span>{delivered} of {len(manifests)} synthetic jobs delivered <span class="result-detail">· {detail}</span></span></p>
 <div class="actions"><a class="action action-primary" href="#jobs">Inspect the recovery trail</a><a class="action" href="{REPO}#run-it-locally">Run it locally</a></div></div>
 <figure class="cell" id="how" aria-describedby="cell-caption">
