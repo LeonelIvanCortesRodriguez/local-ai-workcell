@@ -11,7 +11,7 @@ A small local system that sends each document job to a worker that can do it, re
 
 ## The problem
 
-When AI work is spread over machines with different abilities (one has the OCR engine, another the GPU, another the validator), jobs get lost between them. The operator can't easily say where a job is, whether it finished, what changed it, or how to resume it. A result without a reliable handoff record is hard to trust.
+When AI work is split between workers with different abilities (one runs OCR, another validates, another delivers), jobs get lost between them. The operator can't easily say where a job is, whether it finished, what changed it, or how to resume it. A result without a reliable handoff record is hard to trust. This repository shows that control pattern on one computer.
 
 ## See it recover
 
@@ -40,7 +40,7 @@ Every station records a hash in the manifest. State events are redacted: they ho
 | Implemented and tested | v0.1: deterministic IDs, capability routing, legal state changes, waiting, bounded retry, duplicate protection, checksums, delivery | `python -m unittest`, [`tests/test_workcell.py`](tests/test_workcell.py) |
 | Implemented and tested | v0.2: three local worker processes, authenticated loopback registration, rejection of an invalid key, durable SQLite queue, restart recovery, a deliberate connection drop, Tesseract on three fixed images | `WORKCELL_V2_INTEGRATION=1` tests, [`tests/test_v2.py`](tests/test_v2.py) |
 | Observed once | 3 of 3 PNGs delivered, 1 interrupted connection recovered, 2 simultaneous OCR leases, 1030 ms elapsed (Python 3.14.5, Tesseract 5.5.0, 2026-10-26). One run, not a benchmark | [`docs/v2-sample-report.json`](docs/v2-sample-report.json) |
-| Owner-reported, not verified here | Leonel's private multi-machine practice, where the coordinator role moves between machines | No public evidence |
+| Owner-reported, not verified here | Leonel reports using a similar pattern in private work that spans more than one computer. Nothing in this repository shows, runs, or tests that | No public evidence |
 | Planned | Remote worker transport, real network partitions, broader OCR corpora, GPU contention control | [Berth](https://github.com/T-Crypt/berth) is a source-reviewed candidate only |
 
 A mutation check changes a delivered v0.1 result and requires checksum verification to reject it.
@@ -55,13 +55,13 @@ A mutation check changes a delivered v0.1 result and requires checksum verificat
 
 ## Leonel's role and decisions
 
-**Problem chosen.** Make a multi-machine AI workflow inspectable without exposing the private environment it comes from.
+**Problem chosen.** Show, on one computer and with fictional inputs, how a coordinator can route document jobs by capability and keep a checkable record of every handoff and recovery.
 
 **Role.** Leonel made the operating decisions, set the public proof scope and fictional fixtures, chose the failure cases, and wrote the acceptance checks. Coding agents helped implement the source, the status page, and the tests.
 
 **Decisions that shape the system**
 
-- *Route by capability, not by machine.* Workers are named for what they can do, so the coordinator role can move between machines.
+- *Route by capability, not by host.* Workers are named for what they can do (`ocr-node`, `validation-node`, `results-node`), so a job's route depends on the capability it needs. Remote workers are planned, not built.
 - *Waiting is not failure.* A missing worker costs no attempt; the job keeps its place.
 - *Bounded retry.* Two OCR attempts, then `FAILED`, so nothing loops.
 - *Hash every handoff.* Input, OCR, result, and delivery hashes make a changed result detectable.

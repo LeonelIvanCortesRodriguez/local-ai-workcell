@@ -20,7 +20,7 @@ Engineering and AI-operations leaders deciding whether Leonel can design and run
 
 ## The problem in one paragraph
 
-When AI work is spread over machines with different abilities (one has the OCR engine, another the GPU, another the validator), jobs get lost between them. The operator cannot easily say where a job is, whether it finished, what changed it, or how to resume it. A result without a reliable handoff record is hard to trust.
+When AI work is split between workers with different abilities (one runs OCR, another validates, another delivers), jobs get lost between them. The operator cannot easily say where a job is, whether it finished, what changed it, or how to resume it. A result without a reliable handoff record is hard to trust.
 
 ## What moves through the cell
 
@@ -37,13 +37,13 @@ When AI work is spread over machines with different abilities (one has the OCR e
 
 - **Implemented and tested:** everything in the table above, on one computer.
 - **Observed once:** the v0.2 sample report (2026-10-26, Python 3.14.5, Tesseract 5.5.0). It records three delivered jobs, one recovered interruption, and two simultaneous OCR leases. Its timing is one run, not a benchmark.
-- **Owner-reported, not verified here:** Leonel's private multi-machine practice, in which the coordinator role moves between machines.
+- **Owner-reported, not verified here:** Leonel reports using a similar pattern in private work that spans more than one computer. Nothing in this repository shows, runs, or tests that, and no public surface may present it as a demonstrated capability.
 - **Planned:** remote worker transport, real network partition tests, broader OCR corpora, GPU contention control.
 - **Unsupported, never claim:** general OCR accuracy, multi-computer reliability, production security, quantified operational outcomes.
 
 ## Leonel's contribution
 
-Leonel made the operating decisions: where coordination sits, how work is assigned by capability, and which handoff and recovery evidence an operator needs. He set the public proof scope, the fictional fixtures, the failure cases, and the acceptance checks. Coding agents helped implement the source, interface, and tests. The presentation must say this plainly, once, without inflating or hiding either part.
+Leonel made the operating decisions: what the coordinator is responsible for, how work is assigned by capability, and which handoff and recovery evidence an operator needs. He set the public proof scope, the fictional fixtures, the failure cases, and the acceptance checks. Coding agents helped implement the source, interface, and tests. The presentation must say this plainly, once, without inflating or hiding either part.
 
 ## Five-second test
 

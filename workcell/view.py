@@ -114,9 +114,9 @@ def render_status(manifests: list[dict]) -> str:
 </section>
 <section class="section band" id="role" aria-labelledby="role-title"><div class="shell role">
 <div><h2 id="role-title">Leonel's role</h2>
-<p>Leonel designs and runs adaptable AI workflows across machines in Leonel's own practice, which this repository does not verify. Here he made the operating decisions, set the public proof scope and fictional fixtures, chose the failure cases, and wrote the acceptance checks. Coding agents helped implement the source, page, and tests.</p></div>
+<p>Leonel made the operating decisions shown here, set the public proof scope and fictional fixtures, chose the failure cases, and wrote the acceptance checks. Coding agents helped implement the source, page, and tests. Leonel reports using a similar pattern in private work; this repository does not show or verify that.</p></div>
 <ul class="decisions">
-<li><strong>Route by capability, not by machine.</strong> Workers are <code>ocr-node</code> or <code>validation-node</code>, so the coordinator role can move.</li>
+<li><strong>Route by capability, not by host.</strong> Workers are <code>ocr-node</code>, <code>validation-node</code>, or <code>results-node</code>, so a job's route depends on the capability it needs. Remote workers are planned, not built.</li>
 <li><strong>Waiting costs no attempt.</strong> A missing worker is not a failure; the job keeps its place.</li>
 <li><strong>Bounded retry.</strong> Two OCR attempts, then FAILED, so nothing loops forever.</li>
 <li><strong>Hash at every handoff.</strong> A changed delivered result is detected; the mutation check proves it.</li>

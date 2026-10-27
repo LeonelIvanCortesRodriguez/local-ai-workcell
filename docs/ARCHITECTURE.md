@@ -1,6 +1,6 @@
 # Architecture and state map
 
-The public demonstration runs all roles in one Python process. The coordinator is a movable control role in the owner's reported private practice; the diagram places that role in the local process for this synthetic run. Node names describe capabilities, not actual machines or network endpoints.
+The public demonstration runs every role, including the coordinator, in one Python process on one computer. Node names describe capabilities, not machines or network endpoints. Remote workers are planned, not built.
 
 ```mermaid
 flowchart LR
@@ -25,4 +25,4 @@ The results JSON keeps `source` hashes, `derived` counts, and `manual_review` st
 
 ## Limitations
 
-The owner reports a living private multi-machine workflow for remote tasks, capability-specific OCR, result transfer, Git coordination, and Docker-dependent work. This diagram does not depict or verify that private topology. The public simulation does not schedule distributed tasks, authenticate workers, encrypt traffic, process scans or PDFs, or claim fault tolerance across real machines. Docker is unnecessary for this bounded single-computer proof. Future experiments could test synthetic distribution and Docker routing, authenticated transport, public-corpus OCR, and distributed recovery.
+Owner-reported and not verified here: Leonel describes a private workflow that spans more than one computer, with remote tasks, capability-specific OCR, result transfer, Git coordination, and Docker-dependent work. This repository does not show, run, or test it, and this diagram does not depict it. The public simulation does not schedule distributed tasks, authenticate workers, encrypt traffic, process scans or PDFs, or claim fault tolerance across real machines. Docker is unnecessary for this bounded single-computer proof. Future experiments could test synthetic distribution and Docker routing, authenticated transport, public-corpus OCR, and distributed recovery.
